@@ -22,6 +22,12 @@ build:
 load:
 	python3 tools/load.py
 
+# fast redeploy
+deploy: build
+	k3d image import $(INGEST_IMAGE) -c $(CLUSTER)
+	kubectl delete pod ingest --grace-period=0 --force
+	kubectl apply -f k8s/ingest-pod.yaml
+
 logs:
 	kubectl logs -f -l app=ingest
 

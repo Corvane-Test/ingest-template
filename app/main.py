@@ -64,6 +64,10 @@ async def ingest_event(event: EventIn) -> EventOut:
     return EventOut(status="stored")
 
 
+@app.get("/events/count")
+async def count_events() -> dict[str, int]:
+    return {"count": int(db.fetch_value(db.COUNT_EVENTS, critical=True))}
+
 
 @app.get("/healthz")
 async def healthz() -> dict[str, str]:
