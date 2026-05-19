@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 from app import db, upstream
 from app.config import settings
+from app.normalize import json_default, normalize
 from app.upstream import UpstreamError
 
 log = logging.getLogger("app.main")
@@ -54,10 +55,10 @@ app = FastAPI(title="ingest", version="1.6.0", lifespan=lifespan)
 @app.post("/events", response_model=EventOut)
 async def ingest_event(event: EventIn) -> EventOut:
     enriched = upstream.enrich(event.event_id, event.payload)
-    normalized = event.payload
+    normalized = normalize(json.dumps(event.payload, sort_keys=True))
     db.execute(
         db.INSERT_EVENT,
-        (event.event_id, event.customer, json.dumps(normalized), json.dumps(enriched)),
+        (event.event_id, event.customer, json.dumps(normalized, default=json_default), json.dumps(enriched)),
     )
     upstream.ack(event.event_id)
 

@@ -19,6 +19,15 @@ spec:
           value: http://upstream:8080
         - name: LOG_LEVEL
           value: INFO
+      # restart the container if the app stops responding
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 2
+        failureThreshold: 1
       resources:
         limits:
           cpu: 500m

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Payload normalization: trimmed strings, lower-cased meter and unit names,
+  parsed timestamps and quantities, records ordered by timestamp and resource,
+  and a per-resource summary under `resources`.
+- Liveness probe on `/healthz`.
+
 ## 1.1.0
 
 - `GET /events/count` returns the number of stored rows.
