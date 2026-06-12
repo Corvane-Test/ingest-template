@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 INSERT_EVENT = """
 INSERT INTO events (event_id, customer, payload, enriched)
 VALUES (%s, %s, %s, %s)
+ON CONFLICT DO NOTHING
 """
 
 COUNT_EVENTS = "SELECT count(*) FROM events"

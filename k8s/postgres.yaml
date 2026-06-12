@@ -14,6 +14,8 @@ data:
         enriched    jsonb,
         created_at  timestamptz NOT NULL DEFAULT now()
     );
+    -- lookup and uniqueness on event_id
+    CREATE INDEX IF NOT EXISTS events_event_id_uniq ON events (event_id);
 ---
 apiVersion: apps/v1
 kind: Deployment

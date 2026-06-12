@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+- Unique index on `event_id`.
+- The insert uses `ON CONFLICT DO NOTHING`.
+
 ## 1.2.0
 
 - Payload normalization: trimmed strings, lower-cased meter and unit names,
