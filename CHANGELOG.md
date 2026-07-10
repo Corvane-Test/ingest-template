@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0
+
+- Upstream timeouts and retries.
+- New setting `UPSTREAM_TIMEOUT`, 5 seconds by default.
+
 ## 1.3.0
 
 - Unique index on `event_id`.

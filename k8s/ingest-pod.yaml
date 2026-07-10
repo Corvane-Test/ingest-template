@@ -17,6 +17,8 @@ spec:
           value: postgresql://ingest:ingest@postgres:5432/ingest
         - name: UPSTREAM_URL
           value: http://upstream:8080
+        - name: UPSTREAM_TIMEOUT
+          value: "5"
         - name: LOG_LEVEL
           value: INFO
       # restart the container if the app stops responding

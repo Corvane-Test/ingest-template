@@ -35,6 +35,9 @@ class Settings:
     database_url: str = "postgresql://ingest:ingest@postgres:5432/ingest"
     upstream_url: str = "http://upstream:8080"
 
+    # Upstream (RateGrid) client, in seconds.
+    upstream_timeout: float = 5.0
+
     # Postgres connection.
     db_connect_timeout: int = 5
     db_connect_retry_interval: float = 2.0
@@ -46,6 +49,7 @@ def load_settings() -> Settings:
     return Settings(
         database_url=os.environ.get("DATABASE_URL") or Settings.database_url,
         upstream_url=os.environ.get("UPSTREAM_URL", Settings.upstream_url).rstrip("/"),
+        upstream_timeout=_float("UPSTREAM_TIMEOUT", Settings.upstream_timeout),
         db_connect_timeout=_int("DB_CONNECT_TIMEOUT", Settings.db_connect_timeout),
         db_connect_retry_interval=_float("DB_CONNECT_RETRY_INTERVAL", Settings.db_connect_retry_interval),
         log_level=os.environ.get("LOG_LEVEL", Settings.log_level).upper(),

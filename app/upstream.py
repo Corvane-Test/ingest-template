@@ -9,6 +9,8 @@ import logging
 from typing import Any
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from app.config import settings
 
@@ -26,7 +28,11 @@ class UpstreamError(Exception):
         self.endpoint = endpoint
 
 
+# 5s timeout, 3 retries with backoff
 _session = requests.Session()
+_session.timeout = settings.upstream_timeout  # seconds
+_retry = Retry(total=3, backoff_factor=0.2, status_forcelist=[502, 503, 504])
+_session.mount("http://", HTTPAdapter(max_retries=_retry))
 
 
 def _post(endpoint: str, body: dict[str, Any]) -> requests.Response:
