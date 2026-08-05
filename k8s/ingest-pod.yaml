@@ -19,6 +19,9 @@ spec:
           value: http://upstream:8080
         - name: UPSTREAM_TIMEOUT
           value: "5"
+        # shared Redis, managed by the platform team
+        - name: CACHE_URL
+          value: redis://redis.platform.svc:6379/0
         - name: LOG_LEVEL
           value: INFO
       # restart the container if the app stops responding

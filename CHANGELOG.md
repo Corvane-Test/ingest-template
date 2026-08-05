@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.0
+
+- Dedupe moved to Redis.
+- `CACHE_URL` added to the Pod manifest.
+
 ## 1.4.0
 
 - Upstream timeouts and retries.

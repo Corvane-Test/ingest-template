@@ -19,12 +19,14 @@ from pydantic import BaseModel, Field
 
 from app import db, upstream
 from app.config import settings
+from app.dedupe import get_backend
 from app.normalize import json_default, normalize
 from app.upstream import UpstreamError
 
 log = logging.getLogger("app.main")
 
 logging.basicConfig(level=settings.log_level)
+dedupe = get_backend()
 
 
 class EventIn(BaseModel):
@@ -54,6 +56,9 @@ app = FastAPI(title="ingest", version="1.6.0", lifespan=lifespan)
 
 @app.post("/events", response_model=EventOut)
 async def ingest_event(event: EventIn) -> EventOut:
+    if dedupe.seen(event.event_id):
+        return EventOut(status="duplicate")
+
     enriched = upstream.enrich(event.event_id, event.payload)
     normalized = normalize(json.dumps(event.payload, sort_keys=True))
     db.execute(
@@ -61,6 +66,8 @@ async def ingest_event(event: EventIn) -> EventOut:
         (event.event_id, event.customer, json.dumps(normalized, default=json_default), json.dumps(enriched)),
     )
     upstream.ack(event.event_id)
+    # mark only after the ack succeeds, so a failed event can be retried safely
+    dedupe.mark(event.event_id)
 
     return EventOut(status="stored")
 

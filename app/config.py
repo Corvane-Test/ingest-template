@@ -42,6 +42,9 @@ class Settings:
     db_connect_timeout: int = 5
     db_connect_retry_interval: float = 2.0
 
+    # Redis URL for the dedupe store.
+    redis_url: str | None = None
+
     log_level: str = "INFO"
 
 
@@ -52,6 +55,7 @@ def load_settings() -> Settings:
         upstream_timeout=_float("UPSTREAM_TIMEOUT", Settings.upstream_timeout),
         db_connect_timeout=_int("DB_CONNECT_TIMEOUT", Settings.db_connect_timeout),
         db_connect_retry_interval=_float("DB_CONNECT_RETRY_INTERVAL", Settings.db_connect_retry_interval),
+        redis_url=os.environ.get("REDIS_URL") or None,
         log_level=os.environ.get("LOG_LEVEL", Settings.log_level).upper(),
     )
 
