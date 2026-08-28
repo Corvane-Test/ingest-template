@@ -24,6 +24,18 @@ spec:
           value: redis://redis.platform.svc:6379/0
         - name: LOG_LEVEL
           value: INFO
+        - name: OTEL_SERVICE_NAME
+          value: ingest
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://lgtm:4317
+        - name: OTEL_METRIC_EXPORT_INTERVAL
+          value: "15000"
+        - name: OTEL_LOGS_EXPORTER
+          value: none
+        - name: OTEL_TRACES_SAMPLER
+          value: parentbased_traceidratio
+        - name: OTEL_TRACES_SAMPLER_ARG
+          value: "0.01"
       # restart the container if the app stops responding
       livenessProbe:
         httpGet:

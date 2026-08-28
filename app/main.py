@@ -17,7 +17,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from app import db, upstream
+from app import db, logging_conf, telemetry, upstream
 from app.config import settings
 from app.dedupe import get_backend
 from app.normalize import json_default, normalize
@@ -25,7 +25,7 @@ from app.upstream import UpstreamError
 
 log = logging.getLogger("app.main")
 
-logging.basicConfig(level=settings.log_level)
+logging_conf.configure(settings.log_level)
 dedupe = get_backend()
 
 
@@ -61,10 +61,12 @@ async def ingest_event(event: EventIn) -> EventOut:
 
     enriched = upstream.enrich(event.event_id, event.payload)
     normalized = normalize(json.dumps(event.payload, sort_keys=True))
+    telemetry.events_received.add(1, {"customer": event.customer})
     db.execute(
         db.INSERT_EVENT,
         (event.event_id, event.customer, json.dumps(normalized, default=json_default), json.dumps(enriched)),
     )
+    telemetry.events_stored.add(1, {"customer": event.customer})
     upstream.ack(event.event_id)
     # mark only after the ack succeeds, so a failed event can be retried safely
     dedupe.mark(event.event_id)
