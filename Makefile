@@ -9,6 +9,8 @@ up: build
 		-p "3000:30000@loadbalancer" \
 		-p "8081:30081@loadbalancer"
 	k3d image import $(INGEST_IMAGE) -c $(CLUSTER)
+	kubectl create configmap grafana-dashboard-ingest \
+		--from-file=dashboards/ingest-overview.json --dry-run=client -o yaml | kubectl apply -f -
 	kubectl apply -f k8s/
 	kubectl wait --for=condition=Available deployment --all --timeout=600s
 	kubectl wait --for=condition=Ready pod --all --timeout=600s

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.0
+
+- OpenTelemetry metrics and traces through `opentelemetry-instrument`, exported
+  over OTLP to the `lgtm` stack.
+- Custom counters `events_received_total` and `events_stored_total`.
+- Ingest overview dashboard, provisioned as the Grafana home dashboard.
+
 ## 1.5.0
 
 - Dedupe moved to Redis.
